@@ -1,7 +1,7 @@
 import type { Stadium, IncidentReport, CrowdTelemetry } from '../types';
 
 /**
- * Official FIFA World Cup 2026 Host Venues Dataset (16 Venues across USA, Canada, & Mexico).
+ * Official FIFA World Cup 2026 Host Venues Complete Dataset (All 16 Venues across USA, Canada, & Mexico).
  */
 export const FIFA_STADIUMS: Stadium[] = [
   {
@@ -326,6 +326,246 @@ export const FIFA_STADIUMS: Stadium[] = [
         name: 'Accessible Family Restroom',
         type: 'restroom',
         location: 'West Stand Level 1',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 2,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'hard-rock',
+    name: 'Hard Rock Stadium',
+    city: 'Miami Gardens / Miami, FL',
+    country: 'USA',
+    capacity: 64767,
+    image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+    matches: ['Bronze Final (3rd Place)', 'Group Stage', 'Round of 32'],
+    accessibilityFeatures: [
+      'Open-air covered concourse with 100% ramp access',
+      'Dedicated ADA Shuttle Carts from Lot 1',
+      'Multilingual Audio Description'
+    ],
+    currentCrowdLevel: 'moderate',
+    gates: [
+      {
+        id: 'hr-g1',
+        name: 'Gate 1 (South Entry)',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 6,
+        status: 'open',
+        recommendedSections: ['100 Level']
+      }
+    ],
+    concessions: [
+      {
+        id: 'hr-c1',
+        name: 'Caribbean Fusion & Fresh Juices',
+        type: 'concession',
+        location: 'Level 1, Sec 115',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 4,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'hr-r1',
+        name: 'Universal Family Restroom',
+        type: 'restroom',
+        location: 'Sec 114',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'mercedes-benz',
+    name: 'Mercedes-Benz Stadium',
+    city: 'Atlanta, GA',
+    country: 'USA',
+    capacity: 71000,
+    image: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
+    matches: ['Semi-Final (July 15, 2026)', 'Group Stage', 'Round of 16'],
+    accessibilityFeatures: [
+      'Zero-waste Stadium Gold LEED Certified',
+      'Wheelchair Priority Elevators at Gates 1, 2, 3',
+      'Sensory Inclusive Quiet Pods'
+    ],
+    currentCrowdLevel: 'moderate',
+    gates: [
+      {
+        id: 'mb-g1',
+        name: 'Gate 1 (North Access)',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 5,
+        status: 'open',
+        recommendedSections: ['100-200 Levels']
+      }
+    ],
+    concessions: [
+      {
+        id: 'mb-c1',
+        name: 'ATL Southern Eco Kitchen ($5 Fan First Pricing)',
+        type: 'concession',
+        location: 'Level 1, Sec 108',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'mb-r1',
+        name: 'Gender-Neutral Accessible Restroom',
+        type: 'restroom',
+        location: 'Sec 107',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 2,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'lumen-field',
+    name: 'Lumen Field',
+    city: 'Seattle, WA',
+    country: 'USA',
+    capacity: 69000,
+    image: 'https://images.unsplash.com/photo-1459865264668-3ac5001da395?auto=format&fit=crop&w=800&q=80',
+    matches: ['USMNT Match 2 (June 19, 2026)', 'Group Stage', 'Round of 32'],
+    accessibilityFeatures: [
+      'Sounders Accessibility Assistive Audio Mesh',
+      'Ramp Access from North Plaza',
+      'Sensory Quiet Room at Gate 2'
+    ],
+    currentCrowdLevel: 'low',
+    gates: [
+      {
+        id: 'lf-g1',
+        name: 'North Gate Access',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 4,
+        status: 'open',
+        recommendedSections: ['Main Concourse']
+      }
+    ],
+    concessions: [
+      {
+        id: 'lf-c1',
+        name: 'Pacific Eco Espresso & Seafood',
+        type: 'concession',
+        location: 'Sec 114',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'lf-r1',
+        name: 'Universal Restroom Suite',
+        type: 'restroom',
+        location: 'Sec 112',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 2,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'akron',
+    name: 'Estadio Akron',
+    city: 'Zapopan / Guadalajara',
+    country: 'Mexico',
+    capacity: 48071,
+    image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+    matches: ['Group Stage (4 Matches)'],
+    accessibilityFeatures: [
+      'Berm Ramp Step-free Perimeter Access',
+      'Dedicated Assistive Listening Devices',
+      'Wheelchair Priority Scanning'
+    ],
+    currentCrowdLevel: 'low',
+    gates: [
+      {
+        id: 'ak-g1',
+        name: 'Acceso Principal Norte',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 4,
+        status: 'open',
+        recommendedSections: ['Nivel Abajo']
+      }
+    ],
+    concessions: [
+      {
+        id: 'ak-c1',
+        name: 'Torta Ahogada Eco Stand',
+        type: 'concession',
+        location: 'Concurso Principal',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'ak-r1',
+        name: 'Baños Adaptados PMR',
+        type: 'restroom',
+        location: 'Sección 104',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 2,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'bbva',
+    name: 'Estadio BBVA',
+    city: 'Guadalupe / Monterrey',
+    country: 'Mexico',
+    capacity: 53500,
+    image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+    matches: ['Group Stage', 'Round of 32'],
+    accessibilityFeatures: [
+      'LEED Silver Sustainable Certified Stadium',
+      'Panoramic Wheelchair Seating Platforms',
+      'Express Gate Access 1'
+    ],
+    currentCrowdLevel: 'low',
+    gates: [
+      {
+        id: 'bbva-g1',
+        name: 'Acceso 1 (Poniente)',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 3,
+        status: 'open',
+        recommendedSections: ['Planta Baja']
+      }
+    ],
+    concessions: [
+      {
+        id: 'bbva-c1',
+        name: 'Regio Eco Meat & Beverage Bar',
+        type: 'concession',
+        location: 'Nivel 1',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'bbva-r1',
+        name: 'Baño Universal Adaptado',
+        type: 'restroom',
+        location: 'Acceso 1',
         wheelchairAccessible: true,
         currentWaitMinutes: 2,
         sustainabilityRating: 'A'
