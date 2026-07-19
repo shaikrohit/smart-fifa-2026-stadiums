@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Stadium, SupportedLanguage } from '../types';
-import { Wheelchair, MapPin, Clock, ArrowRight, Volume2, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Accessibility, MapPin, Clock, ArrowRight, Volume2, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { speechService } from '../services/speechService';
 
 interface VenueNavigatorProps {
@@ -32,7 +32,7 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--accent-cyan)', padding: '0.5rem', borderRadius: 'var(--radius-md)' }}>
-            <Wheelchair size={22} aria-hidden="true" />
+            <Accessibility size={22} aria-hidden="true" />
           </div>
           <div>
             <h3 style={{ fontSize: '1.2rem', margin: 0 }}>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Stadium, SupportedLanguage, GenAIResponse } from '../types';
 import { queryStadiumGenAI } from '../services/geminiService';
 import { speechService } from '../services/speechService';
-import { Sparkles, Mic, MicOff, Send, Volume2, ShieldCheck, Wheelchair, Coffee, HelpCircle, ArrowRight } from 'lucide-react';
+import { Sparkles, Mic, MicOff, Send, Volume2, ShieldCheck, Accessibility, Coffee, HelpCircle, ArrowRight } from 'lucide-react';
 
 interface FanConciergeProps {
   stadium: Stadium;
@@ -18,7 +18,7 @@ export const FanConcierge: React.FC<FanConciergeProps> = ({ stadium, language, a
 
   const quickPrompts = [
     {
-      icon: <Wheelchair size={16} />,
+      icon: <Accessibility size={16} />,
       label: language === 'es' ? 'Ruta en Silla de Ruedas' : language === 'fr' ? 'Accès PMR / Fauteuil' : 'Wheelchair Step-Free Route',
       text: 'What is the fastest step-free wheelchair accessible gate and ramp to my section?'
     },

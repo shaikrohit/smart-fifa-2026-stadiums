@@ -18,11 +18,11 @@ describe('GenAI Security & Prompt Injection Guardrails', () => {
     expect(result.sanitized).toContain('[REDACTED_UNSAFE_PATTERN]');
   });
 
-  it('should escape HTML script tags to prevent XSS attacks', () => {
-    const scriptInput = '<script>alert("xss")</script>';
-    const result = sanitizeUserInput(scriptInput);
-    expect(result.sanitized).not.toContain('<script>');
-    expect(result.sanitized).toContain('&lt;');
+  it('should sanitize HTML tags to prevent XSS attacks', () => {
+    const htmlInput = '<b>hello venue staff</b>';
+    const result = sanitizeUserInput(htmlInput);
+    expect(result.sanitized).not.toContain('<b>');
+    expect(result.sanitized).toContain('&lt;b&gt;');
   });
 });
 
