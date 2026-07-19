@@ -1,4 +1,5 @@
 import type { GenAIResponse, SupportedLanguage, PersonaMode } from '../types';
+import DOMPurify from 'dompurify';
 
 /** In-Memory Response Cache for 0ms Instant Response Efficiency */
 const responseCache = new Map<string, GenAIResponse>();
@@ -10,7 +11,7 @@ const RATE_LIMIT_MAX_QUERIES = 15;
 const RATE_LIMIT_WINDOW_MS = 60000;
 
 /**
- * Enhanced Security Guardrail & Input Sanitizer.
+ * Enhanced Security Guardrail & Input Sanitizer with DOMPurify.
  * Protects against Prompt Injection, Cross-Site Scripting (XSS), SQL Injection, and Path Traversal.
  *
  * @param input - Raw user prompt input string.
@@ -46,7 +47,11 @@ export function sanitizeUserInput(input: string): { isSafe: boolean; sanitized: 
     }
   }
 
-  // 3. HTML Entity Encoding for Safe Rendering
+  // 3. DOMPurify Sanitization & HTML Entity Encoding
+  if (typeof window !== 'undefined' && DOMPurify.sanitize) {
+    sanitized = DOMPurify.sanitize(sanitized);
+  }
+
   sanitized = sanitized
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

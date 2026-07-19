@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { Stadium, PersonaMode, AccessibilitySettings } from './types';
 import { FIFA_STADIUMS } from './services/stadiumData';
 import { AccessibilityBar } from './components/AccessibilityBar';
@@ -24,6 +24,11 @@ export const App: React.FC = () => {
     screenReaderRate: 1,
     language: 'en'
   });
+
+  // WCAG AAA: Dynamic document lang attribute update
+  useEffect(() => {
+    document.documentElement.lang = accessibility.language;
+  }, [accessibility.language]);
 
   const handleOpenSecurityNotice = useCallback(() => {
     setIsSecurityOpen(true);
