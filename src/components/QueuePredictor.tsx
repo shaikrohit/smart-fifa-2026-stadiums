@@ -1,13 +1,13 @@
 import React from 'react';
-import { Stadium, SupportedLanguage } from '../types';
-import { Clock, Coffee, ShieldCheck, Leaf, Sparkles, AlertCircle } from 'lucide-react';
+import type { Stadium, SupportedLanguage } from '../types';
+import { Clock, Coffee, ShieldCheck, Leaf, Sparkles } from 'lucide-react';
 
 interface QueuePredictorProps {
   stadium: Stadium;
   language: SupportedLanguage;
 }
 
-export const QueuePredictor: React.FC<QueuePredictorProps> = ({ stadium, language }) => {
+export const QueuePredictor: React.FC<QueuePredictorProps> = React.memo(({ stadium, language }) => {
   return (
     <div className="glass-card" style={{ padding: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -30,7 +30,6 @@ export const QueuePredictor: React.FC<QueuePredictorProps> = ({ stadium, languag
         </span>
       </div>
 
-      {/* Concessions Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
         {stadium.concessions.map((item) => (
           <div
@@ -71,7 +70,6 @@ export const QueuePredictor: React.FC<QueuePredictorProps> = ({ stadium, languag
         ))}
       </div>
 
-      {/* AI Sustainability & Queue Tip Banner */}
       <div style={{ marginTop: '1.25rem', background: 'rgba(251, 191, 36, 0.08)', border: '1px solid rgba(251, 191, 36, 0.2)', borderRadius: 'var(--radius-md)', padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <Sparkles size={20} style={{ color: 'var(--accent-gold)', flexShrink: 0 }} />
         <div style={{ fontSize: '0.8rem', color: '#e5e7eb' }}>
@@ -81,4 +79,4 @@ export const QueuePredictor: React.FC<QueuePredictorProps> = ({ stadium, languag
 
     </div>
   );
-};
+});

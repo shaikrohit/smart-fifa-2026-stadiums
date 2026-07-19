@@ -1,4 +1,4 @@
-import { SupportedLanguage } from '../types';
+import type { SupportedLanguage } from '../types';
 
 class SpeechService {
   private synth: SpeechSynthesis | null = null;

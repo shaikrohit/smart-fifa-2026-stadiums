@@ -1,5 +1,5 @@
 import React from 'react';
-import { PersonaMode, Stadium } from '../types';
+import type { PersonaMode, Stadium } from '../types';
 import { ShieldCheck, Sparkles, Users, Radio, MapPin } from 'lucide-react';
 
 interface NavbarProps {
@@ -11,7 +11,7 @@ interface NavbarProps {
   onOpenSecurityNotice: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
+export const Navbar: React.FC<NavbarProps> = React.memo(({
   stadiums,
   selectedStadium,
   onSelectStadium,
@@ -166,4 +166,4 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
     </header>
   );
-};
+});

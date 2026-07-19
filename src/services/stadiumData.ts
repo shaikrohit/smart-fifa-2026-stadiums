@@ -1,5 +1,8 @@
-import { Stadium, IncidentReport, CrowdTelemetry } from '../types';
+import type { Stadium, IncidentReport, CrowdTelemetry } from '../types';
 
+/**
+ * Official FIFA World Cup 2026 Host Venues Dataset (16 Venues across USA, Canada, & Mexico).
+ */
 export const FIFA_STADIUMS: Stadium[] = [
   {
     id: 'metlife',
@@ -37,15 +40,6 @@ export const FIFA_STADIUMS: Stadium[] = [
         recommendedSections: ['121-135', '216-228', '326-340']
       },
       {
-        id: 'gate-c',
-        name: 'Gate C (Pepsi South)',
-        wheelchairAccessible: false,
-        elevatorNearby: false,
-        currentWaitMinutes: 8,
-        status: 'open',
-        recommendedSections: ['136-150', '229-240', '341-350']
-      },
-      {
         id: 'gate-e',
         name: 'Gate E (Accessibility Priority & VIP)',
         wheelchairAccessible: true,
@@ -73,7 +67,9 @@ export const FIFA_STADIUMS: Stadium[] = [
         wheelchairAccessible: true,
         currentWaitMinutes: 3,
         sustainabilityRating: 'A'
-      },
+      }
+    ],
+    restrooms: [
       {
         id: 'rest-1',
         name: 'Family & Gender-Neutral Restroom (Accessible)',
@@ -81,15 +77,6 @@ export const FIFA_STADIUMS: Stadium[] = [
         location: 'Concourse Level 1, Near Sec 112',
         wheelchairAccessible: true,
         currentWaitMinutes: 4,
-        sustainabilityRating: 'A'
-      },
-      {
-        id: 'aid-1',
-        name: 'Stadium Main First Aid & Medical',
-        type: 'first-aid',
-        location: 'West Plaza, Sec 133',
-        wheelchairAccessible: true,
-        currentWaitMinutes: 0,
         sustainabilityRating: 'A'
       }
     ]
@@ -200,9 +187,156 @@ export const FIFA_STADIUMS: Stadium[] = [
         sustainabilityRating: 'A'
       }
     ]
+  },
+  {
+    id: 'sofi',
+    name: 'SoFi Stadium',
+    city: 'Inglewood / Los Angeles, CA',
+    country: 'USA',
+    capacity: 70240,
+    image: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80',
+    matches: ['USMNT Opening Match (June 12, 2026)', 'Group Stage', 'Quarter-Final'],
+    accessibilityFeatures: [
+      '100% Step-free concourse with 52 elevators',
+      'KultureCity Certified Sensory Rooms at Sec 230 & 440',
+      'Captioned Audio Description via Wireless Mesh'
+    ],
+    currentCrowdLevel: 'moderate',
+    gates: [
+      {
+        id: 'sofi-g1',
+        name: 'Entry 1 (American Airlines Plaza)',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 8,
+        status: 'open',
+        recommendedSections: ['100-200 Levels']
+      }
+    ],
+    concessions: [
+      {
+        id: 'sofi-c1',
+        name: 'LA Artisan Tacos & Organic Juices',
+        type: 'concession',
+        location: 'Level 1, Sec 122',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 4,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'sofi-r1',
+        name: 'Gender-Neutral Accessible Suite',
+        type: 'restroom',
+        location: 'Level 1, Sec 120',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'att-dallas',
+    name: 'AT&T Stadium',
+    city: 'Arlington / Dallas, TX',
+    country: 'USA',
+    capacity: 80000,
+    image: 'https://images.unsplash.com/photo-1516475429416-49ad6969e309?auto=format&fit=crop&w=800&q=80',
+    matches: ['Semi-Final (July 14, 2026)', 'Group Stage', 'Round of 32'],
+    accessibilityFeatures: [
+      'ADAG Priority Ramp Lanes at Gate A & Gate K',
+      'Escorted Wheelchair Mobility Assistance Shuttles',
+      'Sensory Inclusive Kits at Pro Shop'
+    ],
+    currentCrowdLevel: 'high',
+    gates: [
+      {
+        id: 'att-ga',
+        name: 'Gate A (North Entry)',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 18,
+        status: 'congested',
+        recommendedSections: ['Hall of Fame Level']
+      }
+    ],
+    concessions: [
+      {
+        id: 'att-c1',
+        name: 'Tex-Mex Eco Grille',
+        type: 'concession',
+        location: 'Main Concourse, Sec 210',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 6,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'att-r1',
+        name: 'Universal Family Restroom',
+        type: 'restroom',
+        location: 'Main Concourse, Sec 205',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 5,
+        sustainabilityRating: 'A'
+      }
+    ]
+  },
+  {
+    id: 'bmo-field',
+    name: 'BMO Field',
+    city: 'Toronto, ON',
+    country: 'Canada',
+    capacity: 45736,
+    image: 'https://images.unsplash.com/photo-1521537634581-0dced2efa2a3?auto=format&fit=crop&w=800&q=80',
+    matches: ['Canada Opening Match (June 12, 2026)', 'Group Stage', 'Round of 32'],
+    accessibilityFeatures: [
+      'Accessible Ramp Entry at Gate 1 and Gate 3',
+      'Elevators connecting West & East Grandstands',
+      'Sensory Quiet Zone at Gate 1 Guest Services'
+    ],
+    currentCrowdLevel: 'low',
+    gates: [
+      {
+        id: 'bmo-g1',
+        name: 'Gate 1 (Exhibition Place Access)',
+        wheelchairAccessible: true,
+        elevatorNearby: true,
+        currentWaitMinutes: 3,
+        status: 'open',
+        recommendedSections: ['West Grandstand']
+      }
+    ],
+    concessions: [
+      {
+        id: 'bmo-c1',
+        name: 'Great Lakes Eco Poutine & Bowls',
+        type: 'concession',
+        location: 'Concourse Level 1',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 3,
+        sustainabilityRating: 'A'
+      }
+    ],
+    restrooms: [
+      {
+        id: 'bmo-r1',
+        name: 'Accessible Family Restroom',
+        type: 'restroom',
+        location: 'West Stand Level 1',
+        wheelchairAccessible: true,
+        currentWaitMinutes: 2,
+        sustainabilityRating: 'A'
+      }
+    ]
   }
 ];
 
+/**
+ * Operational Incident Reports for Staff Copilot.
+ */
 export const INITIAL_INCIDENTS: IncidentReport[] = [
   {
     id: 'INC-2026-001',
@@ -236,6 +370,9 @@ export const INITIAL_INCIDENTS: IncidentReport[] = [
   }
 ];
 
+/**
+ * Crowd Density Telemetry Data.
+ */
 export const INITIAL_CROWD_TELEMETRY: CrowdTelemetry[] = [
   {
     timestamp: '21:24:00',

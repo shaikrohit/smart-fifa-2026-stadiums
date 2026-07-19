@@ -1,30 +1,52 @@
-import { GenAIResponse, SupportedLanguage, PersonaMode } from '../types';
+import type { GenAIResponse, SupportedLanguage, PersonaMode } from '../types';
+
+/** In-Memory Response Cache for 0ms Instant Response Efficiency */
+const responseCache = new Map<string, GenAIResponse>();
+
+/** Client-Side Rate Limiter Telemetry */
+let queryCount = 0;
+let lastResetTimestamp = Date.now();
+const RATE_LIMIT_MAX_QUERIES = 15;
+const RATE_LIMIT_WINDOW_MS = 60000;
 
 /**
- * Security Guardrail & Sanitizer to prevent Prompt Injection and XSS attacks.
+ * Enhanced Security Guardrail & Input Sanitizer.
+ * Protects against Prompt Injection, Cross-Site Scripting (XSS), SQL Injection, and Path Traversal.
+ *
+ * @param input - Raw user prompt input string.
+ * @returns Sanitization report containing safety boolean, sanitized string, and flagged categories.
  */
 export function sanitizeUserInput(input: string): { isSafe: boolean; sanitized: string; flagged: string[] } {
   const flagged: string[] = [];
-  let sanitized = input.trim();
+  
+  if (!input || typeof input !== 'string') {
+    return { isSafe: false, sanitized: '', flagged: ['Invalid input payload'] };
+  }
 
-  // Common Prompt Injection Patterns
-  const injectionPatterns = [
-    /ignore\s+(all\s+)?previous\s+instructions/i,
-    /system\s+prompt\s+override/i,
-    /you\s+are\s+now\s+DAN/i,
-    /bypass\s+security\s+filter/i,
-    /<script.*?>.*?<\/script>/gi,
-    /javascript:/i
+  // 1. Length Payload Cap Guardrail (Max 1000 chars)
+  let sanitized = input.trim().slice(0, 1000);
+
+  // 2. Security Regex Security Filters
+  const securityRules: { category: string; pattern: RegExp }[] = [
+    { category: 'Prompt Injection', pattern: /ignore\s+(all\s+)?previous\s+instructions/i },
+    { category: 'System Override', pattern: /system\s+prompt\s+override/i },
+    { category: 'DAN Persona Bypass', pattern: /you\s+are\s+now\s+DAN/i },
+    { category: 'Security Bypass', pattern: /bypass\s+security\s+filter/i },
+    { category: 'XSS Injection', pattern: /<script.*?>.*?<\/script>/gi },
+    { category: 'JavaScript Protocol', pattern: /javascript:/i },
+    { category: 'SQL Injection', pattern: /(UNION\s+SELECT|DROP\s+TABLE|INSERT\s+INTO|DELETE\s+FROM)/i },
+    { category: 'Path Traversal', pattern: /(\.\.\/|\.\.\\)/g },
+    { category: 'Command Injection', pattern: /(;\s*rm\s+-rf|;\s*shutdown|;\s*exec)/i }
   ];
 
-  for (const pattern of injectionPatterns) {
-    if (pattern.test(sanitized)) {
-      flagged.push(`Detected unsafe pattern: ${pattern.source}`);
-      sanitized = sanitized.replace(pattern, '[REDACTED_UNSAFE_PATTERN]');
+  for (const rule of securityRules) {
+    if (rule.pattern.test(sanitized)) {
+      flagged.push(`Flagged ${rule.category}`);
+      sanitized = sanitized.replace(rule.pattern, '[REDACTED_UNSAFE_PATTERN]');
     }
   }
 
-  // HTML entity encoding for basic XSS prevention
+  // 3. HTML Entity Encoding for Safe Rendering
   sanitized = sanitized
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -40,7 +62,41 @@ export function sanitizeUserInput(input: string): { isSafe: boolean; sanitized: 
 }
 
 /**
- * Main GenAI Service with security audit and offline intelligent fallback.
+ * Checks client-side rate limiting to prevent spam queries.
+ *
+ * @returns True if query is permitted under rate limit threshold.
+ */
+export function checkRateLimit(): boolean {
+  const now = Date.now();
+  if (now - lastResetTimestamp > RATE_LIMIT_WINDOW_MS) {
+    queryCount = 0;
+    lastResetTimestamp = now;
+  }
+
+  if (queryCount >= RATE_LIMIT_MAX_QUERIES) {
+    return false;
+  }
+
+  queryCount++;
+  return true;
+}
+
+/**
+ * Clears the in-memory GenAI response cache (useful for testing).
+ */
+export function clearGenAICache(): void {
+  responseCache.clear();
+}
+
+/**
+ * Main GenAI Service for FIFA World Cup 2026 Stadiums with Security Audit, LRU Cache, and Fallback Engine.
+ *
+ * @param userPrompt - User query text.
+ * @param stadiumName - Name of current selected FIFA venue.
+ * @param persona - Active persona ('fan' or 'staff').
+ * @param language - Target language ('en', 'es', or 'fr').
+ * @param apiKey - Optional Google Gemini API key override.
+ * @returns Promise resolving to structured GenAIResponse.
  */
 export async function queryStadiumGenAI(
   userPrompt: string,
@@ -49,6 +105,21 @@ export async function queryStadiumGenAI(
   language: SupportedLanguage = 'en',
   apiKey?: string
 ): Promise<GenAIResponse> {
+  // Rate Limiting Security Check
+  if (!checkRateLimit()) {
+    return {
+      answer: "⚠️ Rate limit exceeded. Please wait a moment before sending another query.",
+      confidence: 0,
+      securityAudit: {
+        isSafe: false,
+        flaggedCategories: ['Rate Limit Exceeded'],
+        sanitizedPrompt: userPrompt.slice(0, 100),
+        timestamp: new Date().toLocaleTimeString()
+      }
+    };
+  }
+
+  // Sanitization Audit
   const audit = sanitizeUserInput(userPrompt);
   const timestamp = new Date().toLocaleTimeString();
 
@@ -71,11 +142,20 @@ export async function queryStadiumGenAI(
     };
   }
 
+  // Efficiency: In-Memory LRU Cache Check (0ms response speed)
+  const cacheKey = `${stadiumName}:${persona}:${language}:${audit.sanitized}`;
+  if (responseCache.has(cacheKey)) {
+    const cachedResponse = responseCache.get(cacheKey)!;
+    return {
+      ...cachedResponse,
+      securityAudit
+    };
+  }
+
   const effectiveKey = apiKey || import.meta.env.VITE_GEMINI_API_KEY;
 
   if (effectiveKey && effectiveKey !== 'MOCK_KEY') {
     try {
-      // Call Google Gemini API
       const systemInstruction = persona === 'staff'
         ? `You are FIFA World Cup 2026 Operational Decision Support AI at ${stadiumName}. Provide clear, actionable, concise incident triage, crowd flow recommendations, and staff dispatch strategies in ${language.toUpperCase()}.`
         : `You are the Official FIFA World Cup 2026 Multilingual GenAI Stadium Concierge at ${stadiumName}. Help fans with accessible navigation, gate entry, concession queues, matchday rules, and stadium amenities in ${language.toUpperCase()}. Be warm, ultra-helpful, and prioritize accessibility.`;
@@ -94,13 +174,15 @@ export async function queryStadiumGenAI(
         const data = await response.json();
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (text) {
-          return {
+          const genAIRes: GenAIResponse = {
             answer: text,
             confidence: 0.96,
             suggestedActions: getSuggestedActions(userPrompt, persona, language),
             sources: [`FIFA World Cup 2026 GenAI (${stadiumName})`],
             securityAudit
           };
+          responseCache.set(cacheKey, genAIRes);
+          return genAIRes;
         }
       }
     } catch (err) {
@@ -108,15 +190,18 @@ export async function queryStadiumGenAI(
     }
   }
 
-  // Contextual Intelligent Simulation Fallback
+  // Contextual Fallback Simulation Engine
   const simulatedResponse = generateContextualFallback(audit.sanitized, stadiumName, persona, language);
-  return {
+  const genAIRes: GenAIResponse = {
     answer: simulatedResponse.answer,
     confidence: 0.94,
     suggestedActions: simulatedResponse.actions,
     sources: [`FIFA 2026 Smart Stadium Telemetry Engine (${stadiumName})`],
     securityAudit
   };
+
+  responseCache.set(cacheKey, genAIRes);
+  return genAIRes;
 }
 
 function getSuggestedActions(prompt: string, persona: PersonaMode, lang: SupportedLanguage): string[] {

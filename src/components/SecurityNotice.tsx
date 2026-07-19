@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ShieldCheck, Lock, AlertOctagon, CheckCircle2, X } from 'lucide-react';
 
 interface SecurityNoticeProps {
@@ -6,7 +6,26 @@ interface SecurityNoticeProps {
   onClose: () => void;
 }
 
-export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose }) => {
+export const SecurityNotice: React.FC<SecurityNoticeProps> = React.memo(({ isOpen, onClose }) => {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Keyboard Accessibility: Escape Key Listener & Focus Locking
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Auto focus close button on open
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -38,8 +57,9 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose 
         }}
       >
         <button
+          ref={closeButtonRef}
           onClick={onClose}
-          aria-label="Close Security Modal"
+          aria-label="Close Security Modal (Press Escape)"
           style={{
             position: 'absolute',
             top: '1rem',
@@ -50,7 +70,7 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose 
             cursor: 'pointer'
           }}
         >
-          <X size={20} />
+          <X size={20} aria-hidden="true" />
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
@@ -71,7 +91,7 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose 
           
           <div style={{ background: 'rgba(9, 13, 22, 0.8)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
             <h3 style={{ fontSize: '0.95rem', color: 'var(--accent-gold)', margin: '0 0 0.35rem 0', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <Lock size={16} /> 1. Prompt Injection Shielding & Input Sanitization
+              <Lock size={16} aria-hidden="true" /> 1. Prompt Injection Shielding & Input Sanitization
             </h3>
             <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0 }}>
               All incoming user queries are sanitized via <code>sanitizeUserInput()</code> regex scanners to neutralize prompt injection attacks (e.g. system prompt overrides, DAN personas, code injections) before reaching the GenAI model.
@@ -80,7 +100,7 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose 
 
           <div style={{ background: 'rgba(9, 13, 22, 0.8)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
             <h3 style={{ fontSize: '0.95rem', color: 'var(--accent-green)', margin: '0 0 0.35rem 0', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <CheckCircle2 size={16} /> 2. Safe Fallback Engine & High Availability
+              <CheckCircle2 size={16} aria-hidden="true" /> 2. Safe Fallback Engine & High Availability
             </h3>
             <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0 }}>
               If network connectivity drops or API keys are unconfigured, the platform seamlessly switches to a local deterministic telemetry engine with zero disruption to stadium operations or accessibility guides.
@@ -89,7 +109,7 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose 
 
           <div style={{ background: 'rgba(9, 13, 22, 0.8)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
             <h3 style={{ fontSize: '0.95rem', color: 'var(--accent-cyan)', margin: '0 0 0.35rem 0', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <AlertOctagon size={16} /> 3. Data Privacy & Zero Personal Data Retained
+              <AlertOctagon size={16} aria-hidden="true" /> 3. Data Privacy & Zero Personal Data Retained
             </h3>
             <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0 }}>
               No Personally Identifiable Information (PII) or user location history is saved or passed to third-party sub-processors. All accessibility preferences are stored locally in session memory.
@@ -117,4 +137,4 @@ export const SecurityNotice: React.FC<SecurityNoticeProps> = ({ isOpen, onClose 
       </div>
     </div>
   );
-};
+});

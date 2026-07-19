@@ -1,5 +1,5 @@
-import React from 'react';
-import { AccessibilitySettings } from '../types';
+import React, { useCallback } from 'react';
+import type { AccessibilitySettings } from '../types';
 import { Eye, Type, Volume2, VolumeX, Globe } from 'lucide-react';
 import { speechService } from '../services/speechService';
 
@@ -8,15 +8,15 @@ interface AccessibilityBarProps {
   onChange: (newSettings: AccessibilitySettings) => void;
 }
 
-export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, onChange }) => {
-  const toggleContrast = () => {
+export const AccessibilityBar: React.FC<AccessibilityBarProps> = React.memo(({ settings, onChange }) => {
+  const toggleContrast = useCallback(() => {
     const newContrast = !settings.highContrast;
     onChange({ ...settings, highContrast: newContrast });
     document.documentElement.classList.toggle('high-contrast', newContrast);
     speechService.announceToScreenReader(newContrast ? 'High contrast mode enabled' : 'Normal contrast mode enabled');
-  };
+  }, [settings, onChange]);
 
-  const cycleFontSize = () => {
+  const cycleFontSize = useCallback(() => {
     const scales = [1, 1.15, 1.3];
     const currentIndex = scales.indexOf(settings.fontSizeMultiplier);
     const nextIndex = (currentIndex + 1) % scales.length;
@@ -25,14 +25,14 @@ export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, on
     onChange({ ...settings, fontSizeMultiplier: newScale });
     document.documentElement.style.setProperty('--font-scale', newScale.toString());
     speechService.announceToScreenReader(`Font size set to ${Math.round(newScale * 100)} percent`);
-  };
+  }, [settings, onChange]);
 
-  const toggleVoice = () => {
+  const toggleVoice = useCallback(() => {
     const newVoice = !settings.screenReaderVoice;
     onChange({ ...settings, screenReaderVoice: newVoice });
     if (!newVoice) speechService.stopSpeaking();
     speechService.announceToScreenReader(newVoice ? 'Audio speech enabled' : 'Audio speech muted');
-  };
+  }, [settings, onChange]);
 
   return (
     <aside 
@@ -60,7 +60,6 @@ export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, on
             <Eye size={16} aria-hidden="true" /> Accessibility Suite (WCAG AA):
           </span>
 
-          {/* High Contrast Button */}
           <button
             onClick={toggleContrast}
             aria-pressed={settings.highContrast}
@@ -81,7 +80,6 @@ export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, on
             {settings.highContrast ? 'Contrast: High' : 'Contrast: Normal'}
           </button>
 
-          {/* Font Size Scaling */}
           <button
             onClick={cycleFontSize}
             aria-label={`Current font scale ${Math.round(settings.fontSizeMultiplier * 100)}%. Click to change.`}
@@ -102,7 +100,6 @@ export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, on
             Text: {Math.round(settings.fontSizeMultiplier * 100)}%
           </button>
 
-          {/* Audio Synthesizer */}
           <button
             onClick={toggleVoice}
             aria-pressed={settings.screenReaderVoice}
@@ -124,7 +121,6 @@ export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, on
           </button>
         </div>
 
-        {/* Multilingual Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Globe size={16} style={{ color: 'var(--accent-cyan)' }} aria-hidden="true" />
           <label htmlFor="language-select" className="sr-only">Select Language</label>
@@ -155,4 +151,4 @@ export const AccessibilityBar: React.FC<AccessibilityBarProps> = ({ settings, on
       </div>
     </aside>
   );
-};
+});

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Stadium, SupportedLanguage } from '../types';
-import { Accessibility, MapPin, Clock, ArrowRight, Volume2, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
+import React, { useState, useMemo, useCallback } from 'react';
+import type { Stadium, SupportedLanguage } from '../types';
+import { Accessibility, MapPin, Clock, Volume2, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { speechService } from '../services/speechService';
 
 interface VenueNavigatorProps {
@@ -8,15 +8,18 @@ interface VenueNavigatorProps {
   language: SupportedLanguage;
 }
 
-export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, language }) => {
+export const VenueNavigator: React.FC<VenueNavigatorProps> = React.memo(({ stadium, language }) => {
   const [wheelchairOnly, setWheelchairOnly] = useState(true);
   const [selectedSection, setSelectedSection] = useState('118');
 
-  const filteredGates = wheelchairOnly 
-    ? stadium.gates.filter(g => g.wheelchairAccessible)
-    : stadium.gates;
+  // Efficiency Optimization: useMemo for computed filtered gates
+  const filteredGates = useMemo(() => {
+    return wheelchairOnly 
+      ? stadium.gates.filter(g => g.wheelchairAccessible)
+      : stadium.gates;
+  }, [stadium.gates, wheelchairOnly]);
 
-  const handleAnnounceRoute = (gateName: string, waitTime: number) => {
+  const handleAnnounceRoute = useCallback((gateName: string, waitTime: number) => {
     const text = language === 'es'
       ? `Navegación accesible a la sección ${selectedSection} por ${gateName}. Tiempo de espera estimado en portón: ${waitTime} minutos. Ruta 100% libre de escalones con elevadores cercanos.`
       : language === 'fr'
@@ -25,7 +28,7 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
     
     speechService.speak(text, language);
     speechService.announceToScreenReader(text);
-  };
+  }, [selectedSection, language]);
 
   return (
     <div className="glass-card" style={{ padding: '1.5rem' }}>
@@ -44,7 +47,6 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
           </div>
         </div>
 
-        {/* Wheelchair Accessible Filter Toggle */}
         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: 'var(--bg-secondary)', padding: '0.45rem 0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
           <input
             type="checkbox"
@@ -58,7 +60,6 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
         </label>
       </div>
 
-      {/* Section Quick Selector */}
       <div style={{ marginBottom: '1.25rem' }}>
         <label htmlFor="section-select" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
           Select Ticketed Stadium Section:
@@ -85,7 +86,6 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
         </div>
       </div>
 
-      {/* Gates List */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
         {filteredGates.map((gate) => (
           <div
@@ -155,7 +155,6 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
         ))}
       </div>
 
-      {/* Accessibility Amenities Summary */}
       <div style={{ marginTop: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 'var(--radius-md)', padding: '0.85rem 1rem' }}>
         <h4 style={{ fontSize: '0.85rem', color: 'var(--accent-green)', margin: '0 0 0.35rem 0', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           <CheckCircle2 size={14} /> Venue Accessibility Standards ({stadium.name}):
@@ -169,4 +168,4 @@ export const VenueNavigator: React.FC<VenueNavigatorProps> = ({ stadium, languag
 
     </div>
   );
-};
+});

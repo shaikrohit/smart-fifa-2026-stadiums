@@ -4,5 +4,17 @@ import react from '@vitejs/plugin-react';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './', // Ensures relative asset paths for GitHub Pages subpath deployment
+  base: './', // Relative base for subpath deployments (GitHub Pages)
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
+  },
 });

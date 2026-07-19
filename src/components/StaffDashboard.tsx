@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Stadium, IncidentReport, CrowdTelemetry, SupportedLanguage } from '../types';
+import React, { useState, useCallback } from 'react';
+import type { Stadium, IncidentReport, CrowdTelemetry, SupportedLanguage } from '../types';
 import { INITIAL_INCIDENTS, INITIAL_CROWD_TELEMETRY } from '../services/stadiumData';
-import { Radio, AlertTriangle, ShieldCheck, Users, Send, CheckCircle2, RefreshCw, Volume2, Sparkles } from 'lucide-react';
+import { Radio, AlertTriangle, Users, Send, CheckCircle2, Volume2, Sparkles } from 'lucide-react';
 import { speechService } from '../services/speechService';
 
 interface StaffDashboardProps {
@@ -9,13 +9,13 @@ interface StaffDashboardProps {
   language: SupportedLanguage;
 }
 
-export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, language }) => {
+export const StaffDashboard: React.FC<StaffDashboardProps> = React.memo(({ stadium, language }) => {
   const [incidents, setIncidents] = useState<IncidentReport[]>(INITIAL_INCIDENTS);
   const [telemetry] = useState<CrowdTelemetry[]>(INITIAL_CROWD_TELEMETRY);
   const [broadcastText, setBroadcastText] = useState('');
   const [broadcasting, setBroadcasting] = useState(false);
 
-  const handleDispatch = (id: string) => {
+  const handleDispatch = useCallback((id: string) => {
     setIncidents(prev => prev.map(inc => {
       if (inc.id === id) {
         return { ...inc, status: 'dispatching' };
@@ -23,9 +23,9 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
       return inc;
     }));
     speechService.announceToScreenReader(`Staff dispatched for incident ${id}`);
-  };
+  }, []);
 
-  const handleResolve = (id: string) => {
+  const handleResolve = useCallback((id: string) => {
     setIncidents(prev => prev.map(inc => {
       if (inc.id === id) {
         return { ...inc, status: 'resolved' };
@@ -33,9 +33,9 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
       return inc;
     }));
     speechService.announceToScreenReader(`Incident ${id} marked as resolved`);
-  };
+  }, []);
 
-  const handleBroadcast = (e: React.FormEvent) => {
+  const handleBroadcast = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!broadcastText.trim()) return;
     setBroadcasting(true);
@@ -45,7 +45,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
       setBroadcasting(false);
     });
     speechService.announceToScreenReader(`Broadcast sent to volunteer channel: ${broadcastText}`);
-  };
+  }, [broadcastText, stadium.name, language]);
 
   return (
     <div style={{ display: 'grid', gap: '1.5rem' }}>
@@ -85,10 +85,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
         </div>
       </div>
 
-      {/* Grid: Crowd Telemetry Heatmap & Incident Triage */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-        
-        {/* Crowd Density Risk Heatmap */}
         <div className="glass-card" style={{ padding: '1.25rem' }}>
           <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Users size={18} style={{ color: 'var(--accent-cyan)' }} />
@@ -105,7 +102,6 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
                   </span>
                 </div>
 
-                {/* Progress Bar */}
                 <div style={{ background: 'rgba(255,255,255,0.1)', height: '6px', borderRadius: '3px', overflow: 'hidden', marginBottom: '0.5rem' }}>
                   <div style={{
                     width: `${t.densityPercentage}%`,
@@ -124,7 +120,6 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
           </div>
         </div>
 
-        {/* Volunteer Multilingual Broadcast Generator */}
         <div className="glass-card" style={{ padding: '1.25rem' }}>
           <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Radio size={18} style={{ color: 'var(--accent-gold)' }} />
@@ -184,7 +179,6 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
 
       </div>
 
-      {/* Real-Time GenAI Incident Log */}
       <div className="glass-card" style={{ padding: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
           <h3 style={{ fontSize: '1.1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -269,7 +263,6 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
                 </div>
               </div>
 
-              {/* AI Recommended Action Box */}
               <div style={{ background: 'rgba(6, 182, 212, 0.08)', border: '1px dashed rgba(6, 182, 212, 0.3)', borderRadius: 'var(--radius-sm)', padding: '0.65rem', fontSize: '0.8rem', color: 'var(--accent-cyan)' }}>
                 <Sparkles size={14} style={{ display: 'inline', marginRight: '4px' }} />
                 {inc.aiSuggestedAction}
@@ -281,4 +274,4 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ stadium, languag
 
     </div>
   );
-};
+});

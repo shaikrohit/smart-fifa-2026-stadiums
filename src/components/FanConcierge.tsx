@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Stadium, SupportedLanguage, GenAIResponse } from '../types';
+import React, { useState, useCallback } from 'react';
+import type { Stadium, SupportedLanguage, GenAIResponse } from '../types';
 import { queryStadiumGenAI } from '../services/geminiService';
 import { speechService } from '../services/speechService';
 import { Sparkles, Mic, MicOff, Send, Volume2, ShieldCheck, Accessibility, Coffee, HelpCircle, ArrowRight } from 'lucide-react';
@@ -10,7 +10,7 @@ interface FanConciergeProps {
   autoVoiceEnabled: boolean;
 }
 
-export const FanConcierge: React.FC<FanConciergeProps> = ({ stadium, language, autoVoiceEnabled }) => {
+export const FanConcierge: React.FC<FanConciergeProps> = React.memo(({ stadium, language, autoVoiceEnabled }) => {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<GenAIResponse | null>(null);
@@ -34,7 +34,7 @@ export const FanConcierge: React.FC<FanConciergeProps> = ({ stadium, language, a
     }
   ];
 
-  const handleSearch = async (textToQuery: string) => {
+  const handleSearch = useCallback(async (textToQuery: string) => {
     if (!textToQuery.trim()) return;
     setLoading(true);
     setPrompt(textToQuery);
@@ -52,9 +52,9 @@ export const FanConcierge: React.FC<FanConciergeProps> = ({ stadium, language, a
     } finally {
       setLoading(false);
     }
-  };
+  }, [stadium.name, language, autoVoiceEnabled]);
 
-  const toggleMic = () => {
+  const toggleMic = useCallback(() => {
     if (isListening) {
       setIsListening(false);
       return;
@@ -73,7 +73,7 @@ export const FanConcierge: React.FC<FanConciergeProps> = ({ stadium, language, a
         alert(err);
       }
     );
-  };
+  }, [isListening, language, handleSearch]);
 
   return (
     <section 
@@ -296,4 +296,4 @@ export const FanConcierge: React.FC<FanConciergeProps> = ({ stadium, language, a
 
     </section>
   );
-};
+});

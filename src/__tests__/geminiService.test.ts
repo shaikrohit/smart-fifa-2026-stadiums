@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
-import { sanitizeUserInput, queryStadiumGenAI } from '../services/geminiService';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { sanitizeUserInput, queryStadiumGenAI, clearGenAICache } from '../services/geminiService';
 
 describe('GenAI Security & Prompt Injection Guardrails', () => {
+  beforeEach(() => {
+    clearGenAICache();
+  });
+
   it('should sanitize safe user prompts without flagging', () => {
     const input = 'Where is the wheelchair ramp at MetLife Stadium?';
     const result = sanitizeUserInput(input);
@@ -24,14 +28,31 @@ describe('GenAI Security & Prompt Injection Guardrails', () => {
     expect(result.sanitized).not.toContain('<b>');
     expect(result.sanitized).toContain('&lt;b&gt;');
   });
+
+  it('should truncate payload above 1000 characters for payload capping', () => {
+    const longPayload = 'A'.repeat(1500);
+    const result = sanitizeUserInput(longPayload);
+    expect(result.sanitized.length).toBe(1000);
+  });
 });
 
-describe('GenAI Stadium Concierge Engine', () => {
+describe('GenAI Stadium Concierge Engine & LRU Cache', () => {
+  beforeEach(() => {
+    clearGenAICache();
+  });
+
   it('should return contextual accessible navigation for fan persona', async () => {
     const res = await queryStadiumGenAI('wheelchair step free route', 'MetLife Stadium', 'fan', 'en');
     expect(res.answer).toContain('Gate E');
     expect(res.confidence).toBeGreaterThan(0.9);
     expect(res.securityAudit.isSafe).toBe(true);
+  });
+
+  it('should utilize memory cache on repeated queries for 0ms efficiency', async () => {
+    const query = 'food queue wait times';
+    const res1 = await queryStadiumGenAI(query, 'MetLife Stadium', 'fan', 'en');
+    const res2 = await queryStadiumGenAI(query, 'MetLife Stadium', 'fan', 'en');
+    expect(res1.answer).toEqual(res2.answer);
   });
 
   it('should return operational crowd recommendations for staff persona', async () => {

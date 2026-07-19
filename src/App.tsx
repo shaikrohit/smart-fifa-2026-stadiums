@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Stadium, PersonaMode, AccessibilitySettings } from './types';
+import React, { useState, useCallback } from 'react';
+import type { Stadium, PersonaMode, AccessibilitySettings } from './types';
 import { FIFA_STADIUMS } from './services/stadiumData';
 import { AccessibilityBar } from './components/AccessibilityBar';
 import { Navbar } from './components/Navbar';
@@ -8,7 +8,7 @@ import { VenueNavigator } from './components/VenueNavigator';
 import { QueuePredictor } from './components/QueuePredictor';
 import { StaffDashboard } from './components/StaffDashboard';
 import { SecurityNotice } from './components/SecurityNotice';
-import { ShieldCheck, Globe, Sparkles, Heart } from 'lucide-react';
+import { ShieldCheck, Globe, Sparkles } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [stadiums] = useState<Stadium[]>(FIFA_STADIUMS);
@@ -25,6 +25,14 @@ export const App: React.FC = () => {
     language: 'en'
   });
 
+  const handleOpenSecurityNotice = useCallback(() => {
+    setIsSecurityOpen(true);
+  }, []);
+
+  const handleCloseSecurityNotice = useCallback(() => {
+    setIsSecurityOpen(false);
+  }, []);
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
@@ -38,7 +46,7 @@ export const App: React.FC = () => {
         onSelectStadium={setSelectedStadium}
         persona={persona}
         onTogglePersona={setPersona}
-        onOpenSecurityNotice={() => setIsSecurityOpen(true)}
+        onOpenSecurityNotice={handleOpenSecurityNotice}
       />
 
       {/* Main Content Body */}
@@ -101,7 +109,7 @@ export const App: React.FC = () => {
       </footer>
 
       {/* Security Audit Modal */}
-      <SecurityNotice isOpen={isSecurityOpen} onClose={() => setIsSecurityOpen(false)} />
+      <SecurityNotice isOpen={isSecurityOpen} onClose={handleCloseSecurityNotice} />
 
     </div>
   );
